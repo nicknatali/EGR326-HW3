@@ -28,7 +28,7 @@ public class Server {
     /**
      * See if the server is on duty
      */
-    public boolean isServerIsOnDuty() {
+    public boolean isServerOnDuty() {
         return serverIsOnDuty;
     }
 
@@ -41,7 +41,7 @@ public class Server {
     }
 
 
-    public ArrayList<Table> getTableList() {
+    public ArrayList<Table> getServersTable() {
         return tableList;
     }
 
@@ -66,6 +66,16 @@ public class Server {
      */
     public void setServerId(int serverId) {
             this.serverId = serverId;
+    }
+
+    /**
+     * Remove server from a table
+     */
+    public void removeServer(Table table) {
+
+
+
+
     }
 
     /**

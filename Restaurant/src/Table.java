@@ -17,9 +17,8 @@ public class Table {
      * Constructor
      * @param tableId
      * @param tableSize
-     * @param server
      */
-    public Table(int tableId, int tableSize, Server server) {
+    public Table(int tableId, int tableSize) {
 
     }
 
