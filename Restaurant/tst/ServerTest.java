@@ -26,7 +26,7 @@ public class ServerTest {
             //!Assert
             Assert.assertNotEquals("Incorrect Server Id!", 23, server.getServerId());
             Assert.assertNotEquals("Incorrect is On Duty Value!", !isOnDuty, server.isServerOnDuty());
-            server.removeServer(table);
+            server.removeFromServersTables(table);
             server.addToServersTables(null);
             Assert.assertNull("Incorrect Table!", server.getServersTable().get(0));
         }
@@ -40,8 +40,8 @@ public class ServerTest {
             Table table = new Table(1, 3);
             server.addToServersTables(table);
             //Act
-            server.isServerOnDuty(false);
-            server.isServerOnDuty(3);
+            server.setServerIsOnDuty(false);
+           // server.setServerIsOnDuty(3);
 
 
             //Assert

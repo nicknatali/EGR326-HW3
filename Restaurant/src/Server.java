@@ -9,16 +9,18 @@ public class Server {
     /**
      * Variables
      */
-    private Queue<Integer> serverList;
     private ArrayList<Table> tableList;
-    private Queue<Double> tipList;
     private boolean serverIsOnDuty;
+    public static int serverIndex = 0;
     private int serverId;
+    private double tips;
 
     /**
      * Constructor
      */
     public Server(int serverId, boolean serverIsOnDuty){
+        if(serverId < 0)
+            throw new IllegalArgumentException();
         this.serverId = serverId;
         this.serverIsOnDuty = serverIsOnDuty;
         this.tableList = new ArrayList<>();
@@ -26,10 +28,22 @@ public class Server {
 
 
     /**
-     * See if the server is on duty
+     * Set the serverList's Id to be recognized by.
+     * @param serverId
      */
-    public boolean isServerOnDuty() {
-        return serverIsOnDuty;
+    public void setServerId(int serverId) {
+        this.serverId = serverId;
+    }
+
+    /*
+     * the Table being served by a specific serverList
+     */
+    public void setServersTable(ArrayList<Table> tableList) {
+        this.tableList = tableList;
+    }
+
+    public void setServerIsOnDuty(boolean onDuty) {
+        serverIsOnDuty = onDuty;
     }
 
     /**
@@ -45,12 +59,6 @@ public class Server {
         return tableList;
     }
 
-    /*
-     * the Table being served by a specific serverList
-     */
-    public void setServersTable(ArrayList<Table> tableList) {
-        this.tableList = tableList;
-    }
 
     /**
      * Add to server's list of tables to serve
@@ -61,31 +69,44 @@ public class Server {
    }
 
     /**
-     * Set the serverList's Id to be recognized by.
-     * @param serverId
+     * Remove a server's table
      */
-    public void setServerId(int serverId) {
-            this.serverId = serverId;
+    public boolean removeFromServersTables(Table table){ return tableList.remove(table); }
+
+
+    /**
+     * See if the server is on duty
+     */
+    public boolean isServerOnDuty() {
+
+        return serverIsOnDuty;
     }
 
     /**
-     * Remove server from a table
+     * Add value to tip
      */
-    public void removeServer(Table table) {
+    public void addToTip(double value) {
+        this.tips += value;
+    }
 
 
-
-
+    /**
+     * Returns the tip
+     */
+    public double getTips() {
+        return tips;
     }
 
     /**
      * @return the string representation of the serverList's id
      */
+    @Override
     public String toString() {
-        return "";
+        String returnString = "[Server #" + serverId + " On Duty: " + serverIsOnDuty + "  Tips: " + tips;
+        for(Table each : tableList)
+            returnString += each.getTableId() + " ";
+        return returnString + "]";
     }
-
-
 
 
 }

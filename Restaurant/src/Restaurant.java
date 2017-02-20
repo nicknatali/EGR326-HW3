@@ -10,101 +10,139 @@ public class Restaurant {
     /**
      * Variables
      */
-    private ArrayList<Table> tables;
-    private ArrayList<Server> servers;
-    private Queue<Party> waitlist;
+    private ArrayList<Table> tablesList = new ArrayList<Table>();
+    private ArrayList<Server> serversList = new ArrayList<Server>();
+    private ArrayList<Party> waitlist = new ArrayList<Party>();
     private String restaurantName;
     private double cashRegister;
 
     /**
      * @param restaurantName: The name of the restaurant
-     * @param cashRegister: Where all the money from parties will go.
-     * @param waitlist: Who is waiting to be seated.
      */
-    public Restaurant(String restaurantName, double cashRegister, Queue<Party> waitlist){
-        //Queue<Party> waitList = new Queue <Party>();
+    public Restaurant( String restaurantName, ArrayList<Server> serversList, ArrayList<Table> tablesList){
+        if(restaurantName == "" || serversList == null || tablesList == null)
+            throw new IllegalArgumentException();
         this.restaurantName = restaurantName;
-        this.cashRegister = cashRegister;
+        this.serversList = serversList;
+        this.tablesList = tablesList;
+        this.waitlist = new ArrayList<>();
+    }
+
+    /**
+     * Setter methods
+     */
+
+
+    /**
+     * Set the restaurant's name
+     */
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    /**
+     * Set list of servers
+     */
+    public void setServersList(ArrayList<Server> serversList) {
+        this.serversList = serversList;
+    }
+
+    /**
+     * Get list of servers
+     */
+    public ArrayList<Server> getServersList() {
+        return serversList;
+    }
+
+    /**
+     * Getter methods
+     */
+
+    /**
+     * Get the restaurant's name
+     */
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
     /**
      * Displays the total amount of cash in the register
      */
-    public void displaycashRegister(){
-
+    public double getCashRegister() {
+        return cashRegister;
     }
 
     /**
-     * Display the total amount of tips for a server
+     * Gets the tables
+     * @return
      */
-    public void displayTips(Server server) {
+    public ArrayList<Table> getTables() { return tablesList; }
 
-    }
 
     /**
-     * Set the restaurant's name
+     * Adder methods
      */
-    public void setRestaurantName() {}
+
 
     /**
-     * Get the restaurant's name
+     * Add a server to the server array list
+     * @param server
+     * @return
      */
-    public void getRestaurantName() {}
-
-    /**
-     * Checks to see if party has unique name when comparing to table names and names within the waitinglist
-     */
-    public boolean partyHasUniqueName(){
-        return true;
-    }
-
-    /**
-     * Gets the party's name
-     */
-    public String getPartyName() {
-        return "";
-    }
-
-
     public boolean addServer(Server server){
-        return true;
+        return serversList.add(server);
     }
 
+    /**
+     * Add a table to the table array list
+     * @param table
+     * @return
+     */
     public boolean addTable(Table table){
-        return true;
+        return tablesList.add(table);
     }
 
-    public void addToCashRegister(double total){
-
-
-    }
-
+    /**
+     * Add a party to the waitlist array list
+     * @param party
+     */
     public void addToWaitingList(Party party){
-
+            waitlist.add(party);
     }
 
-    public boolean addParty(Party party) {
-        return true;
+    /**
+     * Add cash to the cash register
+     * @param total
+     */
+    public void addToCashRegister(double total){
+        cashRegister += total;
     }
 
+
+    /**
+     * Remover methods
+     */
+
+    //Remove table from list
     public boolean removeTable(Table table) {
-     return true;
+     return tablesList.remove(table);
     }
 
+    //Remove server from list
     public boolean removeServer(Server server) {
-        return true;
+      return serversList.remove(server);
     }
 
-    public boolean removeParty(Party party) {
-        return true;
-    }
-
+    //Remove from waiting list
     public boolean removeFromWaitList(Party party){
-        return true;
+        return waitlist.remove(party);
     }
 
-
-
+    /**
+     * Get waiting list
+     * @return
+     */
+    public ArrayList<Party> getWaitingList() { return waitlist; }
 
 
 }

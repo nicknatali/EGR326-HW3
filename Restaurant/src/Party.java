@@ -1,4 +1,5 @@
-import java.util.Queue;
+import java.util.ArrayList;
+
 
 /**
  * Created by NickNatali on 2/7/17.
@@ -12,11 +13,12 @@ public class Party {
     private int partySize;
     private String partyName;
 
-
     /**
      * Constructor
      */
     public Party(int partySize, String partyName) {
+        if(partyName == "" || partySize < 0)
+            throw new IllegalArgumentException();
         this.partySize = partySize;
         this.partyName = partyName;
     }
@@ -27,7 +29,7 @@ public class Party {
      * @param partyName: name of the party.
      */
     public void setPartyName(String partyName){
-        //Set the party's name
+        this.partyName = partyName;
     }
 
     /**
@@ -35,40 +37,46 @@ public class Party {
      * @param partySize: size of the party.
      */
     public void setPartySize(int partySize) {
-
+                this.partySize = partySize;
     }
 
     /**
      * Get party size
      */
     public int getPartySize() {
-
-        return 0;
+        return partySize;
     }
 
     /**
      * Get the party's name
      */
     public String getPartyName() {
-        //return the party's name
-        return null;
+        return partyName;
+    }
+
+
+    /**
+     * Checks to see if party has unique name when comparing
+     * to table names and names within the waitinglist
+     *
+     */
+    public static boolean partyHasUniqueName(ArrayList<Party> waitlist, String namePossibility){
+        //if the party has the same name as another party.
+        for(int i = 0; i < waitlist.size(); i++){
+            if(waitlist.get(i).getPartyName().equals(namePossibility)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Let the party pay for a meal to the cash register
-     * @Param: total:
+     * To string method
+     * @return
      */
-    public double payForMeal(double total) {
-            //Let someone enter a number amount for how much to pay.
-        return 0;
+    @Override
+    public String toString() {
+        return "Party " + partyName + " : size=" + partySize;
     }
 
-    /**
-     * Let the party give the server a tip
-     * @param tip:
-     */
-    public double tipServer(double tip){
-        //Let someone enter a number for how much they want to tip.
-        return 0;
-    }
 }
