@@ -41,8 +41,6 @@ public class ServerTest {
             server.addToServersTables(table);
             //Act
             server.setServerIsOnDuty(false);
-           // server.setServerIsOnDuty(3);
-
 
             //Assert
             Assert.assertEquals("Incorrect Server Id!", 3, server.getServerId());

@@ -20,7 +20,7 @@ public class Restaurant {
      * Constructor
      * @param restaurantName: The name of the restaurant
      */
-    public Restaurant( String restaurantName){
+    public Restaurant(String restaurantName){
         if(restaurantName == "")
             throw new IllegalArgumentException();
         this.restaurantName = restaurantName;
@@ -85,14 +85,14 @@ public class Restaurant {
     }
 
 
+    //*******Getter methods**********
+
     /**
      * Get list of servers
      */
     public ArrayList<Server> getServersList() {
         return serversList;
     }
-
-    //*******Getter methods**********
 
 
     /**
@@ -248,8 +248,5 @@ public class Restaurant {
     public boolean removeFromWaitList(Party party){
         return waitlist.remove(party);
     }
-
-
-
 
 }

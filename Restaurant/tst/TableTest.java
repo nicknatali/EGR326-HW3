@@ -1,14 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-/**
- * Created by NickNatali on 2/19/17.
- * Tests the table class
- */
 public class TableTest {
 
+    //Test constructor
     @Test
     public void constructorTest(){
 
@@ -20,15 +15,17 @@ public class TableTest {
         Table table = new Table(tableId, tableSize);
 
         //Assert
-        Assert.assertEquals("Incorrect tableId", tableId, table.getTableId());
+        Assert.assertEquals("Incorrect tableId", tableId, table.getTableSize());
         Assert.assertEquals("Incorrect tableSize", tableSize,table.getTableSize());
 
+        table.setTableSize(tableId+1);
         //Assert Not
         Assert.assertNotEquals("Correct table Id!", 1, table.getTableId());
-        Assert.assertEquals("Correct table Size", 1, table.getTableSize());
+        Assert.assertNotEquals("Correct table Size", 5, table.getTableSize());
 
     }
 
+    //Test is occupied method
     @Test
     public void isOccupiedTest() {
         //Arrange
@@ -38,14 +35,18 @@ public class TableTest {
         //Act
         Table table = new Table(tableId, tableSize);
         Party party = new Party(1, "Nick");
-        table.setPartySeated(party);
         boolean check = table.isOccupied();
 
         //Assert
         Assert.assertEquals("The expected expression is true", true, check);
+
+        table.setPartySeated(party);
+
+        //Assert Not
         Assert.assertNotEquals("The expected expression is true", false, check);
     }
 
+    //Test getter methods
     @Test
     public void getterTest() {
         //Arrange
@@ -60,22 +61,26 @@ public class TableTest {
         Party party = new Party(partySize, partyName);
 
         //Act
-        int getTableId = table.getTableId();
-        int getTableSize = table.getTableSize();
+        table.setServer(server);
+        table.setPartySeated(party);
 
         //Assert
-        Assert.assertEquals("Incorrect Table Id!", tableId, getTableId);
-        Assert.assertEquals("Incorrect Table Size", tableSize, getTableSize);
+        Assert.assertEquals("Incorrect Table Id!", tableId, table.getTableId());
+        Assert.assertEquals("Incorrect Table Size", tableSize, table.getTableSize());
         Assert.assertEquals("Incorrect server value", server, table.getServer());
         Assert.assertEquals("Incorrect party", party, table.getPartySeated());
 
+        table.setTableId(5);
+        table.setServer(new Server(2, true));
+        table.setPartySeated(new Party(4, "jake"));
+
         //!Assert
-        Assert.assertNotEquals("Correct Table Id!", tableId, getTableId);
-        Assert.assertNotEquals("Correct Table size", tableSize, getTableSize);
+        Assert.assertNotEquals("Correct Table Id!", tableId, table.getTableId());
         Assert.assertNotEquals("Correct server value", server, table.getServer());
         Assert.assertNotEquals("Correct Party seated", party, table.getPartySeated());
     }
 
+    //Test reset method
     @Test
     public void resetTableTest() {
 
@@ -93,13 +98,9 @@ public class TableTest {
 
         //Assert
         Assert.assertEquals("Incorrect party value", party, table.getPartySeated());
-        table.setPartySeated(null);
-        Assert.assertNotEquals("Correct party value", null, table.getPartySeated());
         Assert.assertEquals("Incorrect server value", server, table.getServer());
-        table.setServer(null);
-        Assert.assertNotEquals("Correct server value", null, table.getServer());
+        table.resetTable();
+        Assert.assertEquals("Correct party value", null, table.getPartySeated());
+        Assert.assertEquals("Correct server value", null, table.getServer());
     }
-
-
-
 }

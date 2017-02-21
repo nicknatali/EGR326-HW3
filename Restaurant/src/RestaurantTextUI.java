@@ -16,7 +16,6 @@ import java.util.ArrayList;
  */
 public class RestaurantTextUI {
 	// file name from which to read the restaurant data
-	// file name from which to read the restaurant data
 	private static final String DEFAULT_TABLES_FILENAME = "./tables.txt";
 	private static final String DEFAULT_SERVERS_FILENAME = "./servers.txt";
 	private Restaurant restaurant = new Restaurant("Taco Bell");
@@ -133,35 +132,34 @@ public class RestaurantTextUI {
 	// Sends one server home for the night (if possible).
 	private void dismissServer() {
 
-		//When there are no servers in the servers list
-		if (restaurant.getServersList().size() == 0 || restaurant.getServersList() == null) {
-			System.out.println("There aren't any servers to dismiss!");
-		}
-
-		int serversOnDutyCount = 0;
-		//Gather the total amount of servers on duty.
-		for (Server server : restaurant.getServersList()) {
-			if (server.isServerOnDuty())
-				serversOnDutyCount++;
-		}
-
-		//If there is only one server left on duty.
-		if (serversOnDutyCount == 1) {
+		// when there aren't any servers
+		if(restaurant.getServersList().size() == 0 || restaurant.getServersList() == null)
+			System.out.println("No servers to dismiss.");
+		//Get servers on duty
+		int serversOnDutyCount = restaurant.getServersOnDuty();
+		//If there is only one server left
+		if(serversOnDutyCount == 1){
 			System.out.println("There is only 1 server left, none can cash out!");
+			return;
 		}
 
-		//Cash out a server
-		for (Server server : restaurant.getServersList()) {
-			if (server.isServerOnDuty() && server.getServersTable().size() == 0) {
-				server.setServerIsOnDuty(false);
-				// when the server is able to be dismissed,
-				System.out.println("Dismissing server #" + server.getServerId()+" with $" + server.getTips() + " in tips.");
+		//Get how many tables can be served with the number of servers available
+		int tablesThatCanBeServered = 0;
+		for(Server each : restaurant.getServersList()){
+			if(each.isServerOnDuty())
+				tablesThatCanBeServered += (2 - each.getServersTable().size());
+		}
 
+		//Try to cash out a server
+		for(Server each : restaurant.getServersList()){
+			if(each.isServerOnDuty() && each.getServersTable().size() == 0) {
+				each.setServerIsOnDuty(false);
+				// when the server is able to be dismissed,
+				System.out.println("Dismissing server " + each.getServerId() + " with $" + each.getTips() + " in tips.");
 				return;
 			}
-
 		}
-		//If there is only one server with tables remaining
+		// when only one server remains with tables remaining
 		System.out.println("Sorry, no servers can cash out now;");
 	}
 
@@ -169,23 +167,18 @@ public class RestaurantTextUI {
 	// Called when R key is pressed from main menu.
 	// Displays how much money is in the restaurant's cash register.
 	private void cashRegister() {
-
 		System.out.println("Money in the cash register: " + restaurant.getCashRegister());
 	}
 
 	// Called when T key is pressed from main menu.
 	// Displays the current status of all tables.
 	private void tableStatus() {
-		System.out.println("Tables status:");
-
-		//show restaurant's table statuses, e.g.:
-		// Table 5 (2-top): Jones party of 2 - Server #2
-		// Table 6 (4-top): empty
-
-		System.out.println("-----------------------");
-		System.out.println("         Tables        ");
-		for (Table tables : restaurant.getTables()) {
-			System.out.println(tables.toString());
+		//Print Tables
+		System.out.println("--------------------------------------------");
+		System.out.println("                    Tables                  ");
+		System.out.println("--------------------------------------------");
+		for (Table table : restaurant.getTables()){
+			System.out.println(table.toString());
 		}
 	}
 
@@ -227,7 +220,6 @@ public class RestaurantTextUI {
 		restaurant.addToCashRegister(subtotal);
 		//Give tip to server.
 		serverSelected.addToTip(tip);
-
 
 		//Remove table values
 		tableSelected.resetTable();

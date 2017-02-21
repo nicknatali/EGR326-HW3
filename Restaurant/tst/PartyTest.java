@@ -1,12 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.util.ArrayList;
 
-/**
- * Created by NickNatali on 2/20/17.
- * Tests the party class
- */
 public class PartyTest {
 
     //Test the constructor and getter methods
@@ -23,7 +18,7 @@ public class PartyTest {
 
         //Assert
         Assert.assertEquals("Incorrect party size.", partySize, party.getPartySize());
-        Assert.assertEquals("Incorrect party name", partyName, party.getPartyName());
+        Assert.assertEquals("Incorrect party name", partyName, party.getPartySize());
 
         //!Assert
         Assert.assertNotEquals("Incorrect Party size!", 2, party.getPartySize());
@@ -98,7 +93,6 @@ public class PartyTest {
         //!Assert
         Assert.assertNotEquals("The two objects are not equal", !isEqual, party.equals(party2));
         Assert.assertNotEquals("The two objects are not equal", !isEqual, party2.equals(party));
-        Assert.assertTrue(party.hashCode() != party2.hashCode());
     }
 
     //Test clone method
@@ -128,10 +122,10 @@ public class PartyTest {
 
         //Act
         Party party = new Party(partySize, partyName);
-        Party party2 = new Party(2, "Nick");
+        Party party2 = new Party(2,"Nick");
 
         //Assert
-        Assert.assertEquals("Objects are not comparable", 0 , party.compareTo(party2));
+        Assert.assertEquals("Party is bigger but returned otherwise", -1, party.compareTo(party2));
 
         //!Assert
         Assert.assertNotEquals("Objects are comparable", 1, party.compareTo(party2));

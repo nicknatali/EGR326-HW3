@@ -7,7 +7,7 @@ import java.util.Queue;
  * Created by NickNatali on 2/7/17.
  * A table at which parties of customers may sit to eat.
  */
-public class Table {
+public class Table implements Comparable<Table> {
 
     /**
      * Variables
@@ -117,9 +117,17 @@ public class Table {
      * @return an array list of tables
      */
     public static ArrayList<Table> producer(String fileName) throws java.io.IOException{
+        //List to store tables from the text file
         ArrayList<Table> tables = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get(fileName)))
-            tables.add(new Table(++Table.tableIndex, Integer.parseInt(line)));
+        //String to store the line from the file
+        String textData = Files.readAllLines(Paths.get(fileName)).get(1);
+        //String array to store the broken up line from the text file
+        String[] tableSizes = textData.split(" ");
+        //Iterate of the broken up text data and create new tables from it
+        for (String each : tableSizes){
+            tables.add(new Table(++Table.tableIndex, Integer.parseInt(each)));
+        }
+        //return the tables
         return tables;
     }
 
@@ -131,6 +139,52 @@ public class Table {
     @Override
     public String toString() {
         return "Table " + tableId + " : seats=" + tableSize + " vacant=" + isOccupied() + " server=" + server + (seatedParty == null ? "null":seatedParty.getPartyName());
+    }
+
+    /**
+     * Function to compare whether two tables are equal by using the number of seats
+     *
+     * @return whether the number of seats are the same
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj.getClass() == this.getClass()) {
+            Table other = (Table) obj;
+            return this.tableSize == other.tableSize;
+        }
+        return false;
+    }
+
+    /**
+     * Function to generate a new hashcode for the table object
+     *
+     * @return the new hashcode made form the number of seats
+     */
+    @Override
+    public int hashCode() {
+        return 31 * tableSize;
+    }
+
+    /**
+     * Function to compare two table objects
+     *
+     * @return the difference between the number of seats
+     */
+    @Override
+    public int compareTo(Table o) {
+        return this.tableSize - o.tableSize;
+    }
+    /**
+     * Function to clone this table object
+     *
+     * @return a clone of the table object
+     */
+    @Override
+    public Table clone() throws CloneNotSupportedException {
+        Table clone = new Table(tableId, tableSize);
+        clone.setServer(server.clone());
+        clone.setPartySeated(seatedParty.clone());
+        return clone;
     }
 
 }

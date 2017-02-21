@@ -113,7 +113,7 @@ public class Party implements Comparable<Party>{
      */
     @Override
     public Party clone() throws CloneNotSupportedException {
-        return (Party)super.clone();
+        return new Party(partySize, partyName);
     }
 
     /**
