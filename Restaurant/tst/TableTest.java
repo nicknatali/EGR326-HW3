@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Created by NickNatali on 2/19/17.
+ * Tests the table class
  */
 public class TableTest {
 
@@ -98,8 +99,6 @@ public class TableTest {
         table.setServer(null);
         Assert.assertNotEquals("Correct server value", null, table.getServer());
     }
-
-
 
 
 

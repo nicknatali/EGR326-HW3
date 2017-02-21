@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * Created by NickNatali on 2/7/17.
  * A group of customers that can eat at the restaurant
  */
-public class Party {
+public class Party implements Comparable<Party>{
 
     /**
      * Variables
@@ -15,6 +15,8 @@ public class Party {
 
     /**
      * Constructor
+     *  @param partyName the name of the party
+     * @param partySize the size of the party
      */
     public Party(int partySize, String partyName) {
         if(partyName == "" || partySize < 0)
@@ -41,14 +43,14 @@ public class Party {
     }
 
     /**
-     * Get party size
+     * @return Get party size
      */
     public int getPartySize() {
         return partySize;
     }
 
     /**
-     * Get the party's name
+     * @return Get the party's name
      */
     public String getPartyName() {
         return partyName;
@@ -60,12 +62,14 @@ public class Party {
      * to table names and names within the waitinglist
      *
      */
-    public static boolean partyHasUniqueName(ArrayList<Party> waitlist, String namePossibility){
-        //if the party has the same name as another party.
-        for(int i = 0; i < waitlist.size(); i++){
-            if(waitlist.get(i).getPartyName().equals(namePossibility)) {
+    public static boolean partyHasUniqueName(ArrayList<Party> waitingList, ArrayList<Table> tableList, String possibleName){
+        for(Party party : waitingList){
+            if(party.getPartyName() == possibleName)
                 return false;
-            }
+        }
+        for (Table each : tableList){
+            if(!each.isOccupied() && each.getPartySeated().getPartyName().equals(possibleName))
+                return false;
         }
         return true;
     }
@@ -79,4 +83,48 @@ public class Party {
         return "Party " + partyName + " : size=" + partySize;
     }
 
+    /**
+     * Method to compare two party objects
+     * @param o object to be compared
+     * @return whether the two objects are equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(o.getClass() == this.getClass()) {
+            Party other = (Party) o;
+            return this.partyName.equals(other.partyName) && this.partySize == other.partySize;
+        }
+        return false;
+    }
+
+    /**
+     * Method to return the hashcode of the party object
+     * @return integer of the hashcode
+     */
+    @Override
+    public int hashCode() {
+        return 31 * partySize * partyName.length();
+    }
+
+    /**
+     * Method to clone a party object
+     * @return a clone of the original party object
+     * @throws CloneNotSupportedException
+     */
+    @Override
+    public Party clone() throws CloneNotSupportedException {
+        return (Party)super.clone();
+    }
+
+    /**
+     * Method to compare two party objects
+     * @return the result of the subtraction of their sizes
+     */
+    @Override
+    public int compareTo(Party o) {
+        return partySize - o.partySize;
+    }
 }
+
+
+

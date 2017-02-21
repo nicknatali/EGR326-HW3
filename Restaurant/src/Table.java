@@ -1,3 +1,6 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Queue;
 
 /**
@@ -21,8 +24,12 @@ public class Table {
      * @param tableSize
      */
     public Table(int tableId, int tableSize) {
-            this.tableId = tableId;
-            this.tableSize = tableSize;
+        if(tableId < 0 || tableSize < 0)
+            throw new IllegalArgumentException();
+        this.tableId = tableId;
+        this.tableSize = tableSize;
+        this.seatedParty = null;
+        this.server = null;
     }
 
     /**
@@ -35,7 +42,7 @@ public class Table {
 
     /**
      * Returns the tableId
-     * @return
+     * @return an integer representing the tables id
      */
     public int getTableId() {
         return tableId;
@@ -49,7 +56,7 @@ public class Table {
 
     /**
      * Returns the server
-     * @return
+     * @return the server
      */
     public Server getServer() {
         return server;
@@ -57,7 +64,7 @@ public class Table {
 
     /**
      * Returns the party that was seated
-     * @return
+     * @return the party that was seated
      */
     public Party getPartySeated() {
         return seatedParty;
@@ -82,7 +89,7 @@ public class Table {
 
     /**
      * Set the server
-     * @param server
+     * @param server the server for a given table
      */
     public void setServer(Server server) {
         this.server = server;
@@ -90,7 +97,7 @@ public class Table {
 
     /**
      * Seats the party.
-     * @param seatedParty
+     * @param seatedParty the party to be seated
      */
     public void setPartySeated(Party seatedParty) {
         this.seatedParty = seatedParty;
@@ -103,13 +110,27 @@ public class Table {
         this.seatedParty = null;
         this.server = null;
     }
+
+    /**
+     * Function to get the list of tables from the text file
+     * @param fileName the name of the text file
+     * @return an array list of tables
+     */
+    public static ArrayList<Table> producer(String fileName) throws java.io.IOException{
+        ArrayList<Table> tables = new ArrayList<>();
+        for (String line : Files.readAllLines(Paths.get(fileName)))
+            tables.add(new Table(++Table.tableIndex, Integer.parseInt(line)));
+        return tables;
+    }
+
+
     /**
      * Converts table name's number into a strong.
      * @return a string representation of tableName including it's number.
      */
     @Override
     public String toString() {
-        return "Table " + tableId + " : seats=" + tableSize + " vacant=" + isOccupied() + " server=" + server;
+        return "Table " + tableId + " : seats=" + tableSize + " vacant=" + isOccupied() + " server=" + server + (seatedParty == null ? "null":seatedParty.getPartyName());
     }
 
 }

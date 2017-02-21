@@ -19,7 +19,7 @@ public class RestaurantTextUI {
 	// file name from which to read the restaurant data
 	private static final String DEFAULT_TABLES_FILENAME = "./tables.txt";
 	private static final String DEFAULT_SERVERS_FILENAME = "./servers.txt";
-	private Restaurant restaurant = new Restaurant("Taco Bell", new ArrayList<>(), new ArrayList<>());
+	private Restaurant restaurant = new Restaurant("Taco Bell");
 
 	/**
 	 * Constructs a new text user interface for managing a restaurant.
@@ -155,7 +155,7 @@ public class RestaurantTextUI {
 			if (server.isServerOnDuty() && server.getServersTable().size() == 0) {
 				server.setServerIsOnDuty(false);
 				// when the server is able to be dismissed,
-				System.out.println("Dismissing server #" + server.getServerId());
+				System.out.println("Dismissing server #" + server.getServerId()+" with $" + server.getTips() + " in tips.");
 
 				return;
 			}
@@ -192,10 +192,11 @@ public class RestaurantTextUI {
 	// Called when C key is pressed from main menu.
 	// Helps process a party's check to leave the restaurant.
 	private void checkPlease() {
+		//Let the user input values
 		System.out.println("Send the check to a party that has finished eating:");
 		String partyName = ValidInputReader.getValidString("Party's name?", "^[a-zA-Z '-]+$");
 
-		Party partySelected = null;
+		//Declare variables in order to store the selected Server & table
 		Server serverSelected = null;
 		Table tableSelected = null;
 
@@ -205,7 +206,6 @@ public class RestaurantTextUI {
 
 			//If the table is not occupied and the correct party is seated
 			if (!tables.isOccupied() && tables.getPartySeated().getPartyName().equals(partyName)) {
-				partySelected = tables.getPartySeated();
 				serverSelected = tables.getServer();
 				tableSelected = tables;
 				break;
@@ -230,18 +230,18 @@ public class RestaurantTextUI {
 
 
 		//Remove table values
-		System.out.println(tableSelected);
 		tableSelected.resetTable();
 		//Remove table from server
-		serverSelected.
+		serverSelected.removeFromServersTables(tableSelected);
 
-				removeFromServersTables(tableSelected);
-
-		//Set party from waiting list and remove it from the waiting lise
-		if (restaurant.getWaitingList().size() > 0) {
-			setPartyAtTable(restaurant.getWaitingList().get(0));
-			System.out.println(restaurant.getWaitingList().get(0).getPartyName() + " is being seated from the waiting list.");
-			restaurant.getWaitingList().remove(0);
+		//Set party from waiting list and remove it from the waiting list
+		int previousVacantTables = restaurant.getVacantTables();
+		for(Party party : restaurant.getWaitingList()) {
+			restaurant.setPartyAtTable(party);
+			if(restaurant.getVacantTables() > previousVacantTables) {
+				System.out.println(party.getPartyName() + " has been seated from the waiting list.");
+				return;
+			}
 		}
 	}
 
@@ -262,59 +262,42 @@ public class RestaurantTextUI {
 	// Called when P key is pressed from main menu.
 	// Helps seat a newly arriving party at a table in the restaurant.
 	private void partyToBeSeated() {
-		//store whether a server is available
-		boolean serverAvailability = false;
-
-		//Loop through list of servers
-		for (Server server : restaurant.getServersList())
-			serverAvailability = serverAvailability || server.isServerOnDuty();
-
-		//If there aren't any servers available
-		if (!serverAvailability) {
+		//When there are no servers,
+		if (restaurant.getServersOnDuty() == 0) {
 			System.out.println("Sorry, there are no servers here yet to seat this party");
 			System.out.println("and take their orders.  Add servers and try again.");
 			return;
 		}
-
-		//If there is at least one server
+		//When there is at least one server,
 		String partyName = ValidInputReader.getValidString("Party's name?", "^[a-zA-Z '-]+$");
-		int partySize = ValidInputReader.getValidInt("How many people are in the party?", 1, 99999);
-
 		//Check to make sure name is unique
-		while(!Party.partyHasUniqueName(restaurant.getWaitingList(), partyName)){
+		while(!Party.partyHasUniqueName(restaurant.getWaitingList(), restaurant.getTables(), partyName)){
 			// when a duplicate party name is found,
 			System.out.println("We already have a party with that name in the restaurant.");
 			System.out.println("Please try again with a unique party name.");
 			partyName = ValidInputReader.getValidString("Party's name?", "^[a-zA-Z '-]+$");
 		}
-
+		//Get Party size
+		int partySize = ValidInputReader.getValidInt("How many people in the party?", 1, 99999);
 		//Create new party
 		Party party = new Party(partySize, partyName);
-
 		//Variable to store the largest table size and largest available
-		int biggestTable = 0;
-		int biggestTableAvailable = 0;
-		for (Table table : restaurant.getTables()){
-			if (table.getTableSize() > biggestTable)
-				biggestTable = table.getTableSize();
-			if(table.getTableSize() > biggestTableAvailable && table.isOccupied())
-				biggestTableAvailable = table.getTableSize();
-		}
-
-		//Decide the party's fate
-		if(partySize > biggestTable) {
-			//If the restaurant is unable to seat a party because they don't have a table big enough for them
+		int largestTable = restaurant.getLargestTableSize();
+		int largestTableAvailable = restaurant.getLargestTableAvailable();
+		//Decide what happens with the party
+		if(partySize > largestTable) {
+			//when the restaurant doesn't have any tables big enough to ever seat this party,
 			System.out.println("Sorry, the restaurant is unable to seat a party of this size.");
 			return;
-		} else if (partySize > biggestTableAvailable){
-			//When all the tables that could accommodate the party are taken.
+		} else if (partySize > largestTableAvailable){
+			// when all tables large enough to accommodate this party are taken,
 			System.out.println("Sorry, there is no open table that can seat this party now.");
 			boolean wait = ValidInputReader.getYesNo("Place this party onto the waiting list? (y/n)");
 			if(wait)
 				restaurant.addToWaitingList(party);
 			return;
 		} else{
-			setPartyAtTable(party);
+			restaurant.setPartyAtTable(party);
 		}
 	}
 
@@ -349,42 +332,5 @@ public class RestaurantTextUI {
 		}
 	}
 
-	/**
-	 * Set a party at a specific table
-	 *
-	 * @param party
-	 */
-	private void setPartyAtTable(Party party) {
-		int partySize = party.getPartySize();
-		//Pick the table with the best fit relative to the size of the party.
-		int currentClosestFit = restaurant.getTables().get(0).getTableSize() - partySize;
-		int currentBestFitTableIndex = 0;
-		//Loop to compare table sizes
-		for(int i = 1; i < restaurant.getTables().size(); i++) {
-			if(restaurant.getTables().get(i).isOccupied()) {
-				//Get difference between party size and largest table
-				int diffBetweenPartySizeAndTableSize = restaurant.getTables().get(i).getTableSize() - partySize;
 
-				//If there isnt a difference then seat the party at that table
-				if (diffBetweenPartySizeAndTableSize == 0) {
-					currentBestFitTableIndex = i;
-					break;
-				} else if (diffBetweenPartySizeAndTableSize > 0 && diffBetweenPartySizeAndTableSize < currentClosestFit) {
-					currentClosestFit = diffBetweenPartySizeAndTableSize;
-					currentBestFitTableIndex = i;
-				}
-			}
-		}
-		//assign server to the table with the most relevant table size
-		restaurant.getTables().get(currentBestFitTableIndex).setPartySeated(party);
-
-		//Add a server to a specific table
-		for(Server server : restaurant.getServersList()){
-			//if the server is on duty and the table size is less than 2
-			if(server.isServerOnDuty() && server.getServersTable().size() < 2) {
-				restaurant.getTables().get(currentBestFitTableIndex).setServer(server);
-				break;
-			}
-		}
-	}
 }
